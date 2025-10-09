@@ -1,1 +1,8 @@
-pip install scrapy
+pandas 
+numpy 
+torch 
+transformers 
+tensorflow
+scikit-learn
+scrapy
+selenium
