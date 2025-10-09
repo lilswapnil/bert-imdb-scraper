@@ -1,0 +1,39 @@
+from itemadapter import ItemAdapter
+import psycop2
+
+
+class ImdbScraperPipeline:
+
+    def __init__(self):
+        hostname = 'localhost'
+        username = 'root'
+        password = '******'
+        database = 'imdb_scraper'
+
+        # Create / Connect to the database
+        self.connection = psycopg2.connect(host=hostname, user=username, password=password, database=database)
+        
+        # Create cursor, used to execute commands
+        self.cur = self.connection.cursor()
+
+        # Create quote table if it doesn't exist
+        self.cur.execute("""
+            CREATE TABLE IF NOT EXIST quotes(
+            id serial PRIMARY_KEY,
+            title text,
+            category text,
+            description VARCHAR(255) 
+            )
+        """)
+
+    def process_item(self, item, spider):
+
+        # Define insert query
+        self.cur.execute("""
+            INSERT INTO quotes (title, category, description) VALUES  (%s, %s, %s),
+            item["title"], str(item[category]), item["description"]                
+        """)
+
+        # Execute the insert of data in database
+        seld.connection.commit()
+        return item

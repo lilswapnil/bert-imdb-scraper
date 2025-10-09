@@ -1,4 +1,4 @@
-# Scrapy settings for imdbScraper project
+# Scrapy settings for IMDb_Scraper project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,16 +7,16 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "imdbScraper"
+BOT_NAME = "IMDb_Scraper"
 
-SPIDER_MODULES = ["imdbScraper.spiders"]
-NEWSPIDER_MODULE = "imdbScraper.spiders"
+SPIDER_MODULES = ["IMDb_Scraper.spiders"]
+NEWSPIDER_MODULE = "IMDb_Scraper.spiders"
 
 ADDONS = {}
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "imdbScraper (+http://www.yourdomain.com)"
+#USER_AGENT = "IMDb_Scraper (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -40,15 +40,15 @@ DOWNLOAD_DELAY = 1
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    "imdbScraper.middlewares.ImdbscraperSpiderMiddleware": 543,
-#}
+SPIDER_MIDDLEWARES = {
+   "IMDb_Scraper.middlewares.ImdbScraperSpiderMiddleware": 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    "imdbScraper.middlewares.ImdbscraperDownloaderMiddleware": 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   "IMDb_Scraper.middlewares.ImdbScraperDownloaderMiddleware": 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -58,9 +58,9 @@ DOWNLOAD_DELAY = 1
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "imdbScraper.pipelines.ImdbscraperPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "IMDb_Scraper.pipelines.ImdbScraperPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

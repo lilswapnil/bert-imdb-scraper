@@ -8,6 +8,8 @@
 from itemadapter import ItemAdapter
 
 
-class ImdbscraperPipeline:
+class ImdbScraperPipeline:
     def process_item(self, item, spider):
         return item
+
+
