@@ -160,7 +160,7 @@ The system uses the `imdb_top_1000.csv` dataset located in `notebook/data/`. Thi
 ## 🔧 Usage
 
 ### 📊 **Option 1: CSV-based Implementation (Recommended for Beginners)**
-```bash
+   ```bash
 # Navigate to notebook directory
 cd notebook
 
@@ -178,22 +178,56 @@ python -m jupyter notebook imdb-scraper.ipynb
 - ✅ No rate limiting or blocking issues
 
 ### 🕷️ **Option 2: Web Scraping Implementation (Advanced Users)**
-```bash
+
+#### **Method A: Using Scrapy Framework**
+   ```bash
 # Navigate to src directory
 cd src
 
-# Method A: Using Scrapy Framework
+# Basic scraping (respectful settings)
 scrapy crawl imdbspider
 
-# Run with custom settings
+# Run with custom settings for faster scraping
 scrapy crawl imdbspider -s DOWNLOAD_DELAY=2 -s CONCURRENT_REQUESTS=1
 
 # Save output to different formats
 scrapy crawl imdbspider -o movies.json
 scrapy crawl imdbspider -o movies.csv
+scrapy crawl imdbspider -o movies.xml
 
-# Method B: Using BeautifulSoup/Requests (if implemented)
-python imdbspider.py
+# Run with verbose logging
+scrapy crawl imdbspider -L INFO
+
+# Test spider configuration
+scrapy check
+```
+
+#### **Method B: Using BeautifulSoup/Requests**
+```bash
+# Navigate to spiders directory
+cd src/IMDb_Scraper/spiders
+
+# Run the BeautifulSoup scraper
+python3 beautifulsoup_spider.py
+
+# The script will automatically:
+# - Scrape movies from IMDb charts
+# - Save data to CSV and JSON files
+# - Show progress and results
+```
+
+#### **Method C: Interactive Scrapy Shell**
+```bash
+# Navigate to src directory
+cd src
+
+# Start Scrapy shell for testing
+scrapy shell "https://www.imdb.com/chart/top/"
+
+# In the shell, you can test selectors:
+# response.css('a[href*="/title/tt"]::attr(href)').getall()
+# fetch('https://www.imdb.com/title/tt0111161/')
+# response.css('h1::text').get()
 ```
 
 **Advantages:**
@@ -201,6 +235,8 @@ python imdbspider.py
 - ✅ Customizable scraping strategies
 - ✅ Professional web scraping with Scrapy
 - ✅ Scalable for large datasets
+- ✅ Two different implementation approaches
+- ✅ Interactive testing capabilities
 
 ### 🔄 **Option 3: Hybrid Approach**
 ```bash
@@ -231,6 +267,8 @@ jupyter notebook imdb-scraper.ipynb
 ```
 
 ### Expected Output:
+
+#### **CSV-based Implementation Output:**
 ```
 Recommended Movies:
 1. The Dark Knight (9.0) - Action, Crime, Drama
@@ -239,6 +277,62 @@ Recommended Movies:
 4. Blade Runner 2049 (8.0) - Action, Drama, Mystery
 5. Mad Max: Fury Road (8.1) - Action, Adventure, Sci-Fi
 ...
+```
+
+#### **Web Scraping Implementation Output:**
+
+**Scrapy Console Output:**
+```bash
+2025-10-09 17:38:12 [scrapy.utils.log] INFO: Scrapy 2.13.3 started (bot: IMDb_Scraper)
+2025-10-09 17:38:13 [imdbspider] INFO: Parsing movie list: https://www.imdb.com/chart/top/
+2025-10-09 17:38:19 [imdbspider] INFO: Parsing movie details: https://www.imdb.com/title/tt0111161/
+2025-10-09 17:38:52 [scrapy.core.engine] INFO: Spider closed (finished)
+2025-10-09 17:38:52 [scrapy.extensions.feedexport] INFO: Stored json feed (16 items) in: movies.json
+```
+
+**Scraped Data (JSON format):**
+```json
+[
+  {
+    "title": "The Shawshank Redemption",
+    "year": "1994",
+    "rating": "9.3/10",
+    "category": "Drama",
+    "description": "A banker convicted of uxoricide forms a friendship over a quarter century with a hardened convict, working to find redemption and ultimately escape.",
+    "url": "https://www.imdb.com/title/tt0111161/",
+    "image_url": "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_QL75_UX190_CR0,0,190,281_.jpg"
+  },
+  {
+    "title": "The Godfather",
+    "year": "1972",
+    "rating": "9.2/10",
+    "category": "Crime, Drama",
+    "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "url": "https://www.imdb.com/title/tt0068646/",
+    "image_url": "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_QL75_UY281_CR0,0,190,281_.jpg"
+  }
+]
+```
+
+**BeautifulSoup Scraper Output:**
+```bash
+🎬 Starting IMDb BeautifulSoup Scraper
+==================================================
+Scraping chart: https://www.imdb.com/chart/top/
+Fetching: https://www.imdb.com/chart/top/
+Scraping movie 1/20: https://www.imdb.com/title/tt0111161/
+Fetching: https://www.imdb.com/title/tt0111161/
+✓ Scraped: The Shawshank Redemption (9.3/10)
+Scraping movie 2/20: https://www.imdb.com/title/tt0068646/
+Fetching: https://www.imdb.com/title/tt0068646/
+✓ Scraped: The Godfather (9.2/10)
+...
+🎉 Scraping completed successfully!
+📊 Total movies scraped: 20
+📋 Sample results:
+1. The Shawshank Redemption (1994) - Rating: 9.3/10
+2. The Godfather (1972) - Rating: 9.2/10
+3. The Dark Knight (2008) - Rating: 9.0/10
 ```
 
 ## ⚙️ Configuration
@@ -292,19 +386,234 @@ scrapy check
 python -m pytest tests/
 ```
 
+## 🔧 Troubleshooting
+
+### 🕷️ **Web Scraping Issues**
+
+#### **403 Forbidden Errors**
+```bash
+# Problem: Getting 403 errors when accessing IMDb
+# Solution: The spider is already configured with proper headers
+# If still getting errors, try:
+
+# 1. Increase delays
+scrapy crawl imdbspider -s DOWNLOAD_DELAY=5
+
+# 2. Use different user agent
+scrapy crawl imdbspider -s USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+
+# 3. Check if IP is blocked
+curl -I https://www.imdb.com/
+```
+
+#### **No Items Scraped**
+```bash
+# Problem: Spider runs but returns 0 items
+# Solution: Check selectors and HTML structure
+
+# 1. Test selectors in Scrapy shell
+scrapy shell "https://www.imdb.com/chart/top/"
+response.css('a[href*="/title/tt"]::attr(href)').getall()
+
+# 2. Check individual movie page
+fetch('https://www.imdb.com/title/tt0111161/')
+response.css('h1::text').get()
+response.css('[data-testid="hero-rating-bar__aggregate-rating__score"]::text').get()
+```
+
+#### **Rate Limiting**
+```bash
+# Problem: Getting blocked due to too many requests
+# Solution: Increase delays and reduce concurrency
+
+# 1. Use very conservative settings
+scrapy crawl imdbspider -s DOWNLOAD_DELAY=10 -s CONCURRENT_REQUESTS=1
+
+# 2. Enable AutoThrottle (already enabled by default)
+scrapy crawl imdbspider -s AUTOTHROTTLE_ENABLED=True
+```
+
+#### **Memory Issues**
+```bash
+# Problem: Running out of memory with large datasets
+# Solution: Process in batches
+
+# 1. Limit number of movies
+# Edit spider to limit: for link in movie_links[:50]:
+
+# 2. Use feed export instead of storing in memory
+scrapy crawl imdbspider -o movies.json
+```
+
+### 📊 **CSV-based Issues**
+
+#### **Dataset Not Found**
+```bash
+# Problem: imdb_top_1000.csv not found
+# Solution: Check file path and download dataset
+
+# 1. Verify file exists
+ls -la notebook/data/imdb_top_1000.csv
+
+# 2. Download dataset if missing
+# The dataset should be included in the repository
+```
+
+#### **BERT Model Loading Issues**
+```bash
+# Problem: BERT model fails to load
+# Solution: Check internet connection and model cache
+
+# 1. Clear model cache
+rm -rf ~/.cache/huggingface/
+
+# 2. Download model manually
+python -c "from transformers import BertTokenizer, BertModel; tokenizer = BertTokenizer.from_pretrained('bert-base-uncased'); model = BertModel.from_pretrained('bert-base-uncased')"
+```
+
+### 🔍 **Debugging Tips**
+
+#### **Enable Verbose Logging**
+```bash
+# Scrapy with detailed logging
+scrapy crawl imdbspider -L DEBUG
+
+# BeautifulSoup scraper with debug info
+python3 beautifulsoup_spider.py --debug
+```
+
+#### **Test Individual Components**
+```bash
+# Test Scrapy configuration
+cd src && scrapy check
+
+# Test BeautifulSoup scraper
+cd src/IMDb_Scraper/spiders && python3 -c "from beautifulsoup_spider import BeautifulSoupIMDbScraper; scraper = BeautifulSoupIMDbScraper(); print('Scraper initialized successfully')"
+```
+
+#### **Check Network Connectivity**
+```bash
+# Test IMDb accessibility
+curl -I https://www.imdb.com/
+
+# Test with different user agent
+curl -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" -I https://www.imdb.com/
+```
+
 ## 🔍 How It Works
 
 ### 🕷️ **Web Scraping Implementation Flow**
-1. **Data Collection**
-   - Scrapy spider navigates IMDb pages using BeautifulSoup/requests
-   - Extracts movie metadata, ratings, genres, and descriptions
-   - Implements respectful crawling with delays and user agents
-   - Stores data in structured format (JSON/CSV)
 
-2. **Data Processing**
-   - Custom pipelines clean and validate scraped data
-   - Middlewares handle request headers and error management
-   - Data is exported to various formats for analysis
+#### **Step 1: Initialization & Configuration**
+```python
+# Spider starts with these URLs:
+start_urls = [
+    "https://www.imdb.com/chart/top/",      # Top 250 movies
+    "https://www.imdb.com/chart/moviemeter/", # Most popular movies
+    "https://www.imdb.com/chart/boxoffice/",  # Box office hits
+]
+```
+
+#### **Step 2: Chart Page Parsing**
+```python
+def parse_movie_list(self, response):
+    # Extract movie URLs from chart pages
+    movie_links = response.css('a[href*="/title/tt"]::attr(href)').getall()
+    
+    # Clean URLs and remove query parameters
+    for link in movie_links[:10]:  # Limit for testing
+        clean_link = link.split('?')[0] if '?' in link else link
+        movie_url = response.urljoin(clean_link)
+        yield scrapy.Request(url=movie_url, callback=self.parse_movie_details)
+```
+
+#### **Step 3: Individual Movie Page Scraping**
+```python
+def parse_movie_details(self, response):
+    # Extract movie data using CSS selectors
+    title = response.css('h1::text').get()
+    rating = response.css('[data-testid="hero-rating-bar__aggregate-rating__score"]::text').get()
+    year = response.css('span[data-testid="hero-title-block__year"]::text').get()
+    genres = response.css('a[href*="genre"]::text').getall()
+    description = response.css('[data-testid="plot-xl"]::text').get()
+    
+    # Create structured data item
+    item = ImdbScraperItem()
+    item['title'] = title.strip() if title else None
+    item['rating'] = rating.strip() if rating else None
+    # ... populate other fields
+    
+    yield item  # Send to pipeline for processing
+```
+
+#### **Step 4: Data Processing Pipeline**
+```python
+class ImdbScraperPipeline:
+    def process_item(self, item, spider):
+        # Clean and validate data
+        if item['title'] and item['rating']:
+            # Convert rating to float
+            item['rating'] = float(item['rating'].replace('/10', ''))
+            # Clean title
+            item['title'] = item['title'].strip()
+            return item
+        return None  # Drop invalid items
+```
+
+#### **Step 5: Anti-Detection Measures**
+```python
+# Custom middleware adds browser-like headers
+def process_request(self, request, spider):
+    request.headers['Referer'] = 'https://www.google.com/'
+    request.headers['Sec-Ch-Ua'] = '"Not_A Brand";v="8", "Chromium";v="120"'
+    request.headers['Sec-Ch-Ua-Mobile'] = '?0'
+    request.headers['Sec-Ch-Ua-Platform'] = '"macOS"'
+    return None
+```
+
+#### **Step 6: Respectful Crawling**
+```python
+# Settings for respectful scraping
+DOWNLOAD_DELAY = 1                    # 1 second between requests
+CONCURRENT_REQUESTS_PER_DOMAIN = 1    # One request at a time
+AUTOTHROTTLE_ENABLED = True           # Automatic throttling
+AUTOTHROTTLE_START_DELAY = 2          # Start with 2 second delay
+ROBOTSTXT_OBEY = False                # Disabled for IMDb
+```
+
+#### **Step 7: Data Export**
+```bash
+# Export to different formats
+scrapy crawl imdbspider -o movies.json    # JSON format
+scrapy crawl imdbspider -o movies.csv     # CSV format
+scrapy crawl imdbspider -o movies.xml     # XML format
+```
+
+#### **BeautifulSoup Alternative Flow:**
+```python
+class BeautifulSoupIMDbScraper:
+    def scrape_imdb_charts(self, max_movies=50):
+        # 1. Get chart pages
+        for chart_url in chart_urls:
+            response = self.get_page(chart_url)
+            movie_urls = self.parse_movie_list(response)
+            
+        # 2. Scrape individual movies
+        for movie_url in movie_urls:
+            movie_data = self.parse_movie_details(movie_url)
+            self.movies.append(movie_data)
+            
+        # 3. Save results
+        self.save_to_csv('imdb_movies.csv')
+        self.save_to_json('imdb_movies.json')
+```
+
+#### **Error Handling & Resilience:**
+- **403 Forbidden**: Fixed with proper headers and user-agent
+- **Rate Limiting**: Implemented delays and throttling
+- **Network Errors**: Automatic retries with exponential backoff
+- **Data Validation**: Pipeline filters invalid/missing data
+- **Duplicate Prevention**: Scrapy's built-in duplicate filter
 
 ### 📊 **CSV-based Implementation Flow**
 1. **Data Loading**

@@ -3,7 +3,7 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-import scrapy.item import Item, Field
+from scrapy import Item, Field
 
 
 class ImdbScraperItem(Item):

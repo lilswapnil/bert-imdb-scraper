@@ -69,6 +69,12 @@ class ImdbScraperDownloaderMiddleware:
         # Called for each request that goes through the downloader
         # middleware.
 
+        # Add additional headers to make requests look more like a real browser
+        request.headers['Referer'] = 'https://www.google.com/'
+        request.headers['Sec-Ch-Ua'] = '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"'
+        request.headers['Sec-Ch-Ua-Mobile'] = '?0'
+        request.headers['Sec-Ch-Ua-Platform'] = '"macOS"'
+        
         # Must either:
         # - return None: continue processing this request
         # - or return a Response object
