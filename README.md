@@ -28,6 +28,13 @@ Recommendations are refined using **IMDb ratings** and previously mentioned movi
 
 ---
 
+## Create Environment
+- python3 -m venv venv_name
+- Windows:
+   - `source venv_name/bin/activate`
+- MacOS:
+   - `source venv_name/bin/activate`
+
 ## ⚙️ Requirements
 - Python 3.7+  
 - Dependencies:  
@@ -54,27 +61,92 @@ The system uses the file **`imdb_top_1000.csv`**, which must contain the followi
    ```bash
    git clone https://github.com/lilswapnil/Movie-Recommendation-System-using-Transformers-and-IMDb-web-scraping.git
    cd transformers-powered-Movies-recommendation-system-using-IMDB-web-scraping
-Install dependencies:
+   ```
 
-bash
-Copy code
-pip install pandas numpy torch transformers scikit-learn
-Download the dataset imdb_top_1000.csv and place it in the working directory.
-Update the file_path variable in the script to point to the dataset location.
+2. Install dependencies:
+   ```bash
+   pip install pandas numpy torch transformers scikit-learn
+   ```
 
-▶️ Usage
+3. Download the dataset `imdb_top_1000.csv` and place it in the working directory.
+
+4. Update the `file_path` variable in the script to point to the dataset location.
+
+---
+
+## ▶️ Usage
 Run the script:
-
-bash
-Copy code
+```bash
 python trans2.py
+```
+
 Follow the prompts:
-
-Enter movie names in double quotes (e.g., "Inception").
-
-Specify minimum IMDb ratings (e.g., imdb:8).
+- Enter movie names in double quotes (e.g., `"Inception"`).
+- Specify minimum IMDb ratings (e.g., `imdb:8`).
 
 The system will return the top 15 recommended movies.
+
+---
+
+## 🔗 Link the Notebook Kernel and VS Code Terminal (macOS)
+
+Follow these steps to ensure your Jupyter notebook kernel and VS Code integrated terminal use the same Python environment.
+
+1) Create and activate a virtual environment (project root):
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+```
+
+2) Install dependencies (and the Jupyter kernel helper):
+```bash
+# If you have a requirements.txt, prefer:
+# pip install -r requirements.txt
+
+pip install numpy pandas torch transformers scikit-learn tensorflow ipykernel
+```
+
+3) Register this environment as a Jupyter kernel:
+```bash
+python -m ipykernel install --user --name=movie-rec-venv --display-name "MovieRec (venv)"
+```
+
+4) In VS Code, select the same kernel and interpreter:
+- Command Palette → “Jupyter: Select Notebook Kernel” → pick “MovieRec (venv)”.
+- Command Palette → “Python: Select Interpreter” → choose `.venv/bin/python` for this workspace.
+
+5) Ensure the VS Code terminal uses the same environment:
+- Close all integrated terminals in VS Code and open a new one. You should see `(.venv)` in the prompt.
+- If not, activate manually:
+```bash
+source .venv/bin/activate
+```
+
+6) Verify they match:
+- In a notebook cell:
+```python
+import sys; print(sys.executable)
+```
+- In the VS Code terminal:
+```bash
+which python
+```
+Both should point to `<project>/.venv/bin/python`.
+
+7) Optional: pin the interpreter for this workspace (auto-activates terminal):
+Create or update `.vscode/settings.json`:
+```json
+{
+  "python.defaultInterpreterPath": ".venv/bin/python"
+}
+```
+
+Troubleshooting:
+- List installed kernels: `jupyter kernelspec list`
+- Remove an old kernel: `jupyter kernelspec remove <kernel-name>`
+
+---
 
 # 🎥 Transformers-Powered Movie Recommendation System (IMDb Scraping)
 
@@ -97,40 +169,37 @@ This project is a BERT-powered movie recommendation engine...
   <em>Sample recommendations returned by the system for query inputs.</em>
 </p>
 
+---
 
+## 🛠 Code Walkthrough
+1. **Data Loading & Preprocessing**  
+   - Loads dataset via pandas.  
+   - Filters relevant columns (`Genre`, `Series_Title`, `IMDB_Rating`, `Overview`).  
 
-🛠 Code Walkthrough
-1. Data Loading & Preprocessing
-Loads dataset via pandas.
+2. **BERT Model Integration**  
+   - Loads BERT tokenizer & model (`bert-base-uncased`).  
+   - Converts movie overviews into embeddings.  
 
-Filters relevant columns (Genre, Series_Title, IMDB_Rating, Overview).
+3. **User Input Processing**  
+   - Normalizes text and extracts movie names / IMDb rating constraints.  
 
-2. BERT Model Integration
-Loads BERT tokenizer & model (bert-base-uncased).
+4. **Similarity Calculation**  
+   - Computes cosine similarity between input embeddings and movie embeddings.  
+   - Adjusts weighting if specific movies are mentioned.  
 
-Converts movie overviews into embeddings.
+5. **Recommendation**  
+   - Returns top 15 matches ranked by similarity scores.  
 
-3. User Input Processing
-Normalizes text and extracts movie names / IMDb rating constraints.
+---
 
-4. Similarity Calculation
-Computes cosine similarity between input embeddings and movie embeddings.
-
-Adjusts weighting if specific movies are mentioned.
-
-5. Recommendation
-Returns top 15 matches ranked by similarity scores.
-
-🖥 Example
-Input:
-
-arduino
-Copy code
+## 🖥 Example
+**Input:**
+```bash
 "Inception" imdb:8
-Output:
+```
 
-markdown
-Copy code
+**Output:**
+```markdown
 Recommended Movies:
 1. The Dark Knight
 2. Interstellar
@@ -138,26 +207,30 @@ Recommended Movies:
 4. Memento
 5. The Prestige
 ...
-⚡ Customization
-IMDb Filter → Adjust extract_imdb_rating() for custom thresholds.
+```
 
-Number of Results → Change output size in recommend_movies() function.
+---
 
-🚧 Limitations
-Limited to imdb_top_1000.csv dataset quality.
+## ⚡ Customization
+- **IMDb Filter** → Adjust `extract_imdb_rating()` for custom thresholds.  
+- **Number of Results** → Change output size in `recommend_movies()` function.  
 
-Embedding generation with BERT is computationally expensive for large datasets.
+---
 
-🔮 Future Enhancements
-Include genre and cast-based filtering.
+## 🚧 Limitations
+- Limited to `imdb_top_1000.csv` dataset quality.  
+- Embedding generation with BERT is computationally expensive for large datasets.  
 
-Fine-tune BERT embeddings on movie-specific datasets.
+---
 
-Add complex query support (e.g., “sci-fi thrillers with rating > 8”).
+## 🔮 Future Enhancements
+- Include genre and cast-based filtering.  
+- Fine-tune BERT embeddings on movie-specific datasets.  
+- Add complex query support (e.g., “sci-fi thrillers with rating > 8”).  
+- Optimize performance for larger movie datasets.  
 
-Optimize performance for larger movie datasets.
+---
 
-🙏 Acknowledgments
-Dataset sourced from IMDb.
-
-BERT model provided by the Hugging Face Transformers library.
+## 🙏 Acknowledgments
+- Dataset sourced from IMDb.  
+- BERT model provided by the Hugging Face Transformers library.  

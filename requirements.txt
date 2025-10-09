@@ -2,4 +2,6 @@ pandas
 numpy 
 torch 
 transformers 
+tensorflow
 scikit-learn
+scrapy
