@@ -1,4 +1,4 @@
-# Movie Recommendation Notebook
+# Movie Recommendation System Using BERT Transformer
 
 This folder contains the CSV-based, notebook-first implementation of the movie recommendation system. It uses a pre-processed IMDb dataset and BERT embeddings to generate recommendations from natural-language prompts. No web scraping is required for this workflow.
 
@@ -26,6 +26,32 @@ pip install -r requirements.txt
 
 # Launch the notebook
 jupyter notebook imdb-scraper.ipynb
+```
+
+## Key BERT Recommendation Snippet
+
+```python
+import pandas as pd
+import torch
+from transformers import AutoTokenizer, AutoModel
+
+df = pd.read_csv("data/imdb_top_1000.csv")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+model = AutoModel.from_pretrained("bert-base-uncased")
+
+texts = df["Overview"].fillna("").tolist()
+batch = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
+with torch.no_grad():
+  outputs = model(**batch).last_hidden_state[:, 0, :]
+
+prompt = "action thriller"
+query = tokenizer(prompt, return_tensors="pt")
+with torch.no_grad():
+  q_vec = model(**query).last_hidden_state[:, 0, :]
+
+scores = torch.matmul(outputs, q_vec.T).squeeze()
+top_idx = torch.topk(scores, k=5).indices
+print(df.loc[top_idx, ["Series_Title", "IMDB_Rating"]])
 ```
 
 ## Expected Flow In The Notebook
