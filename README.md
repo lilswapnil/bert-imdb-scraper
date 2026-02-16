@@ -1,26 +1,33 @@
 # Movie Recommendation System Using BERT Transformer
 
-This repository provides a notebook-first workflow for movie recommendations using BERT embeddings over a pre-processed IMDb dataset. A separate Scrapy project is included for collecting raw IMDb data.
+This repository includes two parts:
+
+1. A notebook-first pipeline that generates BERT embeddings for an IMDb dataset and returns movie recommendations from natural-language prompts.
+2. A Scrapy project that can collect raw IMDb data if you want to refresh or expand the dataset.
 
 <p align="center">
   <img src="./assets/result.png" width="80%" alt="IMDB Movies Scraper" />
 </p>
 
-## Contents
+## Repository Layout
 
-- Notebook workflow and dataset
-- BERT-based recommendation example
-- Scrapy-based IMDb scraper
+- `notebook/` : Jupyter notebook workflow and dataset
+- `src/` : Scrapy project for IMDb crawling
+- `requirements.txt` : root dependencies (includes notebook + scraper)
+
+## Python Version
+
+TensorFlow does not yet provide wheels for Python 3.13+, so use Python 3.10 or 3.11 for this project.
 
 ## Notebook Workflow
 
-The notebook runs end-to-end: load data, generate embeddings, and query recommendations from natural-language prompts.
+The notebook runs end-to-end: load data, generate BERT embeddings, and query recommendations.
 
-### What Is Included
+### Included Files
 
-- `imdb-scraper.ipynb`: notebook for data loading, embeddings, and recommendations
-- `data/imdb_top_1000.csv`: dataset used in the notebook
-- `requirements.txt`: notebook dependencies
+- `notebook/imdb-scraper.ipynb`
+- `notebook/data/imdb_top_1000.csv`
+- `notebook/requirements.txt`
 
 ### Quick Start
 
@@ -93,15 +100,16 @@ action thriller imdb:7.5
 
 ### Troubleshooting
 
-- Dataset not found: confirm `data/imdb_top_1000.csv` exists.
+- Dataset not found: confirm `notebook/data/imdb_top_1000.csv` exists.
 - Model download issues: clear the Hugging Face cache at `~/.cache/huggingface` and retry.
 - Slow runtime: reduce the dataset size or run on a GPU.
+- `tensorflow` install fails on Python 3.13+: use Python 3.10 or 3.11.
 
-## IMDb Web Scraper Component
+## IMDb Web Scraper (Scrapy)
 
-The Scrapy project extracts movie data from IMDb and can save output in JSON or CSV formats.
+The Scrapy project collects movie data from IMDb charts and can export JSON or CSV.
 
-### Structure
+### Scraper Structure
 
 ```
 src/
@@ -116,17 +124,9 @@ src/
 └── scrapy.cfg                    # Project configuration
 ```
 
-### Quick Start
-
-Prerequisites:
-
-- Python 3.7+
-- Scrapy installed (`pip install scrapy`)
-
-Running the spider:
+### Run The Spider
 
 ```bash
-# Navigate to src directory
 cd src
 
 # Run the IMDb spider
@@ -140,18 +140,13 @@ scrapy crawl imdbspider -o movies.json
 scrapy crawl imdbspider -o movies.csv
 ```
 
-### Configuration
+### Spider Behavior
 
-Edit `IMDb_Scraper/settings.py` to customize:
+- Starts from IMDb chart pages: Top 250, Most Popular, and Box Office.
+- `ROBOTSTXT_OBEY` is set to `False` in `settings.py`.
+- `CONCURRENT_REQUESTS_PER_DOMAIN = 1` and `DOWNLOAD_DELAY = 1` by default.
 
-- Download delays
-- Concurrent requests
-- User agents
-- Pipeline settings
-
-### Data Structure
-
-The spider extracts the following data for each movie:
+### Scraped Fields
 
 - `title`: Movie title
 - `category`: Movie genre/category
@@ -161,32 +156,17 @@ The spider extracts the following data for each movie:
 - `url`: IMDb page URL
 - `image_url`: Movie poster URL
 
-### Settings
-
-Key configuration options in `settings.py`:
-
-- `DOWNLOAD_DELAY = 1`: Delay between requests (seconds)
-- `CONCURRENT_REQUESTS_PER_DOMAIN = 1`: Max concurrent requests per domain
-- `ROBOTSTXT_OBEY = True`: Respect robots.txt rules
-
 ### Development
-
-Create a custom spider:
 
 ```bash
 scrapy genspider myspider example.com
-```
-
-Testing:
-
-```bash
 scrapy check
 scrapy shell "https://www.imdb.com/"
 ```
 
-### Notes
+## Dependencies
 
-- The spider respects IMDb's robots.txt and implements proper delays.
-- Data is processed through custom pipelines for cleaning and validation.
-- Middlewares handle request headers and error handling.
-- Output can be saved in multiple formats (JSON, CSV).
+The root `requirements.txt` includes:
+
+- `pandas`, `numpy`, `torch`, `transformers`, `tensorflow`, `scikit-learn`
+- `scrapy`, `selenium`
